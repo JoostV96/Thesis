@@ -7,11 +7,11 @@ It consists of two files:
 
 
 
-Prerequisitions: 
+**Prerequisites:** 
 
-Download Python 3.7
+Download Python 3.x -> https://www.python.org/downloads/
 
-Install anaconda -- https://www.anaconda.com/distribution/
+Install anaconda -> https://www.anaconda.com/distribution/
 
 Open the Anaconda Navigator and install your preferred IDE (e.g. Spyder)
 
