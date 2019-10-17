@@ -19,7 +19,7 @@ Use the Anaconda Promt and run the following command:
 ```
 pip install gym
 ```
-Next we need to install the Pybullet environment. 
+Next we need to install the PyBullet environment. 
 
 For this we first need the microsoft visual C++ buildtools.
 
