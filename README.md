@@ -29,6 +29,6 @@ pip install pybullet
 conda install -c menpo ffmpeg
 ```
 
-To run the Hopper task set `self.env_name = "HopperBulletEnv-v0"`
+To run the Hopper task set `self.env_name = "HopperBulletEnv-v0"` and adjust the parameters accordingly.
 
-To run the Inverted Double Pendulum task set `self.env_name = "InvertedDoublePendulumBulletEnv-v0"`
+To run the Inverted Double Pendulum task set `self.env_name = "InvertedDoublePendulumBulletEnv-v0"` and adjust the parameters accordingly.
