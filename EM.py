@@ -1,5 +1,5 @@
 """
-Electromagnetism-like Mechanism by Birbil and Fang (2003)
+Electromagnetism-like Mechanism by Birbil and Fang (2003).
 
 @author: Joost Verlaan
 """
@@ -13,83 +13,81 @@ import time
 
 
 class Hp():
-    """ Class containing all hyperparameters needed to run the algortihm
+    """ Class containing all hyperparameters needed to run the algortihm.
     
     Attributes:
-        MAXITER: maximum number of iterations
-        nb_states: dimension of state vector
-        nb_action: dimension of action vector
-        delta: local search parameter, [0,1]
-        m: sample size
-        LSITER: maximum number of local search iterations
-        n: total dimension of problem
-        upper_bound: upper bound of matrix of parameters
-        lower_bound: lower bound of matrix of parameters
-        seed: random seed
-        env_name: name of environment
+        MAXITER: maximum number of iterations.
+        nb_states: dimension of state vector.
+        nb_action: dimension of action vector.
+        delta: local search parameter, [0,1].
+        m: sample size.
+        LSITER: maximum number of local search iterations.
+        n: total dimension of problem.
+        upper_bound: upper bound of matrix of parameters.
+        lower_bound: lower bound of matrix of parameters.
+        seed: random seed.
+        env_name: name of environment.
     """
     def __init__(self):
-        self.MAXITER = 9021 
-        self.nb_states = 0  # altered in initialization
-        self.nb_actions = 0  # altered in initialization
+        self.MAXITER = 1000 
+        self.nb_states = 0  # altered at initialization
+        self.nb_actions = 0  # altered at initialization
         self.delta = 0.3  
-        self.m = 10  
-        self.LSITER = 0  
-        self.n = 0  # altered in initialization
+        self.m = 20  
+        self.LSITER = 10  # set equal to 0 if local search is not used
+        self.n = 0  # altered at initialization
         self.upper_bound = 9.355
         self.lower_bound = -9.355
-        self.seed = 617
-        self.env_name = 'InvertedDoublePendulumBulletEnv-v0'     
+        self.seed = 901
+        self.env_name = 'InvertedDoubleBulletEnv-v0'     
         
-def evaluate(theta, state):
-    """Perform matrix multiplication
+def evaluate(theta, x):
+    """Calculates the action vector.
     
     Args:
-        theta: matrix of parameters
-        state: state vector
+        theta: matrix of parameters.
+        x: state vector.
     
     Returns:
-        Resulting action vector    
+        Resulting action vector.
     """
-    return theta.dot(state)
+    return theta.dot(x)
     
 def explore(env, theta, hp):
-    """Perform a single episode and get resulting reward
+    """Explores the environment for a single episode.
     
     Args: 
-        env: environment of the task
-        theta: matrix of parameters
-        hp: object containing all parameters
+        env: environment of the task.
+        theta: matrix of parameters.
+        hp: object containing all parameters.
         
     Returns:
-        Reward resulting from a single episode    
+        Reward resulting from a single episode.   
     """
     env.seed(hp.seed)  # reset environment to the same state
     state = env.reset()
     done = False
-    num_plays = 0.
     sum_rewards = 0
     while not done:
         action = evaluate(theta, state)
         state, reward, done, _ = env.step(action)
         sum_rewards += reward
-        num_plays += 1
         
     return sum_rewards
 
 
 def initialize(env, hp):
-    """Initialize the m random solutions
+    """Initializes the m random solutions.
     
     Args:
-        env: environment of the task
-        hp: object containing all parameters
+        env: environment of the task.
+        hp: object containing all parameters.
     
     Returns:
         thetas: 3D numpy array containing the m initialized 
-                matrices of parameters
-        rewards: all found rewards for each matrix
-        best_reward: current best reward found    
+                matrices of parameters.
+        rewards: all found rewards for each matrix.
+        best_reward: current best reward found.  
     """
     np.random.seed(hp.seed)
     rewards = [0]*hp.m
@@ -108,19 +106,19 @@ def initialize(env, hp):
        
  
 def local(env, thetas, hp, rewards):
-    """Perform local search on thetas
+    """Performs local search on thetas.
     
     Args:
-        env: environment of the task
-        thetas: 3D numpy array containing all matrices of parameters
-        hp: object containing all parameters
-        rewards: all previously found rewards for each matrix
+        env: environment of the task.
+        thetas: 3D numpy array containing all matrices of parameters.
+        hp: object containing all parameters.
+        rewards: all previously found rewards for each matrix.
     
     Returns:
-        thetas_new: newly update thetas
-        rewards: new corresponding rewards
-        best_reward: current best reward found
-        index: index of current best reward    
+        thetas_new: newly update thetas.
+        rewards: new corresponding rewards.
+        best_reward: current best reward found.
+        index: index of current best reward.    
     """
     length = hp.delta*(hp.upper_bound - hp.lower_bound)  
     thetas_new = np.zeros((hp.m, hp.nb_actions, hp.nb_states))
@@ -151,15 +149,15 @@ def local(env, thetas, hp, rewards):
 
 
 def CalcF(thetas, hp, rewards):
-    """Calculate the force matrices for each theta
+    """Calculates the force matrices for each theta.
     
     Args:
-        thetas: 3D numpy array containing all matrices of parameters
-        hp: object containing all parameters
-        rewards: all previously found rewards for each matrix
+        thetas: 3D numpy array containing all matrices of parameters.
+        hp: object containing all parameters.
+        rewards: all previously found rewards for each matrix.
     
     Returns:
-        F: 3D numpy array containing all force matrices
+        F: 3D numpy array containing all force matrices.
     """
     best_reward = np.max(rewards)
     denom = sum(rewards - best_reward)
@@ -184,20 +182,20 @@ def CalcF(thetas, hp, rewards):
 
 
 def Move(F, thetas, hp, index, iteration):
-    """Update the thetas using the force matrices
+    """Updates the thetas using the force matrices.
     
     Args: 
-        F: 3D numpy array containing all force matrices
-        thetas: 3D numpy array containing all matrices of parameters
-        hp: object containing all parameters
-        index: index of current best reward
+        F: 3D numpy array containing all force matrices.
+        thetas: 3D numpy array containing all matrices of parameters.
+        hp: object containing all parameters.
+        index: index of current best reward.
         iteration: current iterations of the algorithm 
-                   (used in case of diminishing step size)
+                   (used in case of diminishing step size).
     
     Returns:
         thetas_new: 3D numpy array containing all updated 
-                    matrices of parameters
-        rewards: new corresponding rewards    
+                    matrices of parameters.
+        rewards: new corresponding rewards.
     """
     thetas_new = thetas.copy()
     rewards = [0]*hp.m
@@ -220,17 +218,14 @@ def Move(F, thetas, hp, index, iteration):
     
 
 def EM(env, hp):
-    """Electromagnetism-like Mechanism
+    """Electromagnetism-like Mechanism.
     
     This function performs the complete EM algorithm by calling 
-    the previous functions
+    the previous functions.
     
     Args:
-        env: environment of the task
-        hp: object containing all parameters
-        
-    Returns: 
-        optimal_reward: best reward found by the algorithm   
+        env: environment of the task.
+        hp: object containing all parameters.
     """
     thetas, optimal_reward, rewards = initialize(env, hp)
     iteration = 1
@@ -244,18 +239,17 @@ def EM(env, hp):
         thetas, rewards = Move(F, thetas_new, hp, index, iteration)
         iteration += 1
     
-    return optimal_reward
 
 
 def mkdir(base, name):
-    """Creates directory for the clips of the tasks
+    """Creates directory for the clips of the tasks.
     
     Args:
-        base: base of the directory
-        name: name of the created map
+        base: base of the directory.
+        name: name of the created map.
     
     Returns:
-        path: path to the directory    
+        path: path to the directory.   
     """
     path = os.path.join(base, name)
     if not os.path.exists(path):
@@ -273,7 +267,6 @@ np.random.seed(hp.seed)
 
 # Create gym environment
 env = gym.make(hp.env_name)
-env.seed(hp.seed)
 env = wrappers.Monitor(env, monitor_dir, force=True)
 env.seed(hp.seed)
 
