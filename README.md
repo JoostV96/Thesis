@@ -32,3 +32,5 @@ conda install -c menpo ffmpeg
 To run the Hopper task set `self.env_name = "HopperBulletEnv-v0"` and adjust the parameters accordingly.
 
 To run the Inverted Double Pendulum task set `self.env_name = "InvertedDoublePendulumBulletEnv-v0"` and adjust the parameters accordingly.
+
+NOTE: the code for ARS is retrieved from https://github.com/sourcecode369/Augmented-Random-Search-/blob/master/Augmented%20Random%20Search/ars.py
